@@ -281,6 +281,20 @@ async def setpoints(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"✅ Points updated\nCountry: {country}\nNew Points: {points}"
     )
 
+async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_ID:
+        return
+
+    total_users = users_col.count_documents({})
+    total_numbers = numbers_col.count_documents({})
+
+    text = (
+        "📊 *Bot Statistics*\n\n"
+        f"👥 Total Users: {total_users}\n"
+        f"📲 Available Numbers: {total_numbers}"
+    )
+
+    await update.message.reply_text(text, parse_mode="Markdown")
 # ================= REFER =================
 async def refer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     q = update.callback_query
@@ -303,6 +317,7 @@ def main():
     app.add_handler(CommandHandler("addpoints", addpoints))
     app.add_handler(CommandHandler("addnumber", addnumber))
     app.add_handler(CommandHandler("setpoints", setpoints))
+    app.add_handler(CommandHandler("stats", stats))
 
     app.add_handler(CallbackQueryHandler(profile, pattern="profile"))
     app.add_handler(CallbackQueryHandler(buy_menu, pattern="buy"))
